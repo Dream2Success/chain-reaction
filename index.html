@@ -2,280 +2,175 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Chain Reaction — Single Player (Red Green Blue)</title>
-<meta name="description" content="Single-player Chain Reaction game (RGB). Responsive, mobile-friendly, single-file. Host on GitHub Pages.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Chain Reaction — RGB</title>
+<meta name="description" content="Chain Reaction — mobile friendly. Host on GitHub Pages." />
 <style>
   :root{
-    --bg1: #071526;
-    --bg2: #08122a;
-    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
-    --muted: #9fb0cc;
-    --glass: rgba(255,255,255,0.03);
-    --accent: #7ee3ff;
-    --cell-gap: 10px;
-    --max-width: 980px;
-    --ui-radius: 14px;
-    --red: #ff4d6d;
-    --green: #4cc96b;
-    --blue: #4cc9f0;
-    --shadow: 0 18px 60px rgba(2,8,20,0.6);
-    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --bg1:#041020;
+    --bg2:#071a2a;
+    --muted:#9fb0cc;
+    --red:#ff4d6d;
+    --green:#4cc96b;
+    --blue:#4cc9f0;
+    --cell-gap:10px;
+    --max-width:980px;
+    --ui-radius:12px;
+    --glass-w: clamp(58px, 14vw, 110px);
+    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
   }
-
-  html,body{height:100%;margin:0;font-family:var(--font);background:
-    radial-gradient(800px 360px at 6% 10%, rgba(10,30,60,0.35), transparent 14%),
-    linear-gradient(180deg,var(--bg1),var(--bg2)); color:#e9f3ff; -webkit-font-smoothing:antialiased}
-  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
-  .card{width:100%;max-width:var(--max-width);background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03)}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  h1{margin:0;font-size:20px}
-  p.lead{margin:0;color:var(--muted);font-size:13px}
-
-  /* top controls */
-  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
-  .btn{background:linear-gradient(180deg,#1f6feb,#2c8cff);color:white;border:none;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(44,140,255,0.12)}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#d7e8ff}
-  .select{background:transparent;border-radius:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .statusbar{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:14px;flex-wrap:wrap}
-
-  /* game area */
-  .game-wrap{display:flex;gap:20px;margin-top:18px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
-  .board-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:14px;border-radius:12px;box-shadow: inset 0 8px 20px rgba(0,0,0,0.25);min-width:260px}
-  .board{display:grid;grid-gap:var(--cell-gap);background:transparent;border-radius:8px;padding:10px;touch-action:manipulation;min-width:200px}
-
-  /* responsive grid size control */
-  .side{min-width:220px;display:flex;flex-direction:column;gap:12px}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
-  .muted{color:var(--muted);font-size:13px}
-
-  /* cell visuals */
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:var(--font);-webkit-font-smoothing:antialiased;background:
+    radial-gradient(900px 360px at 6% 8%, rgba(10,30,60,0.28), transparent 16%),
+    linear-gradient(180deg,var(--bg1),var(--bg2)); color:#eaf3ff}
+  /* center container */
+  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:12px}
+  .card{width:100%;max-width:var(--max-width);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border-radius:14px;padding:12px;box-shadow:0 18px 60px rgba(2,8,20,0.6);border:1px solid rgba(255,255,255,0.02)}
+  /* minimal controls row */
+  .topbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{background:linear-gradient(180deg,#1f6feb,#2c8cff);color:white;border:none;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06); color:#d7e8ff;padding:8px 10px}
+  .select{background:transparent;border-radius:8px;padding:8px 10px;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .smallmuted{font-size:13px;color:var(--muted)}
+  /* board */
+  .board-wrap{display:flex;justify-content:center}
+  .board{display:grid;grid-gap:var(--cell-gap);background:transparent;border-radius:10px;padding:6px;touch-action:manipulation;min-width:220px;max-width:100%}
   .cell{
-    background:rgba(255,255,255,0.02);
+    background: rgba(255,255,255,0.02);
     border-radius:10px;
-    min-height:68px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    overflow:visible;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+    min-height: calc(var(--glass-w) * 1.05);
+    display:flex;align-items:center;justify-content:center;position:relative;overflow:visible;box-shadow:0 8px 20px rgba(0,0,0,0.45);
+    transition: transform 140ms ease, background 220ms;
     cursor:pointer;
-    transition: transform 160ms ease, box-shadow 160ms ease, background 220ms ease;
-    user-select:none;
+    -webkit-tap-highlight-color: transparent;
   }
-  .cell:active{ transform: translateY(2px) scale(0.995); }
-  .cell:focus{ outline:3px solid rgba(80,160,255,0.12); outline-offset:6px; }
-
-  /* orbs inside cell (stacked) */
-  .orb-stack{ display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center; pointer-events:none }
+  .cell:active{ transform: translateY(2px) scale(0.995) }
+  .orb-stack{ display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center; pointer-events:none; transform-origin:center}
   .orb{
-    width:36px;height:36px;border-radius:50%;box-shadow: 0 8px 18px rgba(0,0,0,0.4), inset 0 -6px 10px rgba(0,0,0,0.12);transition: transform 260ms cubic-bezier(.2,.9,.3,1), opacity 260ms;}
+    width:36px;height:36px;border-radius:50%;box-shadow:0 8px 18px rgba(0,0,0,0.42), inset 0 -6px 12px rgba(0,0,0,0.12);transition: transform 260ms cubic-bezier(.2,.9,.3,1), opacity 260ms; will-change: transform, opacity;
+  }
   .orb.small{ width:24px;height:24px }
-
-  /* count badge */
-  .badge{ position:absolute; right:8px; top:8px; font-weight:700; font-size:12px; padding:4px 8px;border-radius:999px; background:rgba(0,0,0,0.35); color:#fff }
-
-  /* feedback colors */
+  .badge{ position:absolute; right:8px; top:8px; font-weight:800; font-size:12px; padding:4px 8px; border-radius:999px; background:rgba(0,0,0,0.35); color:#fff }
   .c-red{ background: linear-gradient(180deg,var(--red), #ff7a95); }
   .c-green{ background: linear-gradient(180deg,var(--green), #79e698); }
   .c-blue{ background: linear-gradient(180deg,var(--blue), #7edfff); }
-
-  /* explosion pulse */
   .pulse{ animation: pulse 420ms cubic-bezier(.2,.9,.3,1); }
-  @keyframes pulse{ 0%{ transform: scale(0.85); opacity:0.9 } 60%{ transform: scale(1.15); opacity:1 } 100%{ transform: scale(1); opacity:1 } }
+  @keyframes pulse{ 0%{ transform: scale(0.86); opacity:0.9 } 60%{ transform: scale(1.16); opacity:1 } 100%{ transform: scale(1); opacity:1 } }
+  .shake{ animation: shake 520ms cubic-bezier(.25,.8,.25,1); }
+  @keyframes shake { 0%{ transform: translateX(0) } 20%{ transform: translateX(-8px) } 40%{ transform: translateX(6px) } 60%{ transform: translateX(-6px) } 80%{ transform: translateX(3px) } 100%{ transform: translateX(0) } }
 
-  /* confetti area */
-  .confetti{ position:absolute; left:0; right:0; top:0; bottom:0; pointer-events:none; overflow:hidden }
+  /* confetti */
+  .confetti{ position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden;z-index:9999 }
 
-  /* footer & small screens */
-  footer{ margin-top:14px; color:var(--muted); font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px }
+  /* footer */
+  footer{margin-top:10px;text-align:center;color:var(--muted);font-size:15px;padding:6px}
 
   /* responsive */
-  @media (min-width:980px){
-    .game-wrap{flex-wrap:nowrap}
+  @media (min-width:900px){
+    .card{padding:16px}
   }
   @media (max-width:720px){
-    .card{padding:12px}
-    .game-wrap{flex-direction:column;align-items:stretch}
-    .side{min-width:unset;order:2}
+    .btn{padding:10px 10px;font-size:14px}
   }
-
-  /* small touches */
-  .hint{ font-size:13px; color:var(--muted) }
-  .small{ font-size:13px }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card" role="application" aria-label="Chain Reaction single-player game">
-    <header>
-      <div>
-        <h1>Chain Reaction — RGB Puzzle</h1>
-        <p class="lead">Start a spark and watch colorful chain reactions. Aim to clear the board or build the biggest chain!</p>
+  <main class="card" role="application" aria-label="Chain Reaction game">
+    <div class="topbar">
+      <div class="controls" id="controlsLeft">
+        <button id="newBtn" class="btn" title="New">New</button>
+        <select id="sizeSelect" class="select" title="Grid size">
+          <option value="4x6">4×6</option>
+          <option value="5x7" selected>5×7</option>
+          <option value="6x8">6×8</option>
+        </select>
+        <input id="fillInput" type="range" min="30" max="100" value="78" style="width:110px" title="Fill density">
+        <button id="soundToggle" class="btn ghost" title="Toggle sound">🔊</button>
       </div>
-      <div class="statusbar">
-        <div class="muted">Best chain: <strong id="bestChain">0</strong></div>
-        <div class="muted">Last chain: <strong id="lastChain">0</strong></div>
-      </div>
-    </header>
 
-    <div class="controls">
-      <button id="newBtn" class="btn">New Game</button>
-      <select id="sizeSelect" class="select" title="Grid size">
-        <option value="4x6">4 × 6 (easy)</option>
-        <option value="5x7" selected>5 × 7 (medium)</option>
-        <option value="6x8">6 × 8 (hard)</option>
-      </select>
-      <label class="muted small">Random fill:
-        <input id="fillInput" type="range" min="30" max="100" value="78" style="vertical-align:middle;margin-left:8px">
-        <span id="fillPct">78%</span>
-      </label>
-      <div style="flex:1"></div>
-      <div class="muted small">Moves: <strong id="moves">0</strong></div>
-      <div class="muted small">Chain length: <strong id="chain">0</strong></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="moves" class="smallmuted">0</div>
+        <div id="chain" class="smallmuted">0</div>
+      </div>
     </div>
 
-    <div class="game-wrap">
-      <div class="board-card" style="flex:1;min-width:260px">
-        <div id="boardContainer" class="board" aria-live="polite" role="grid"></div>
-      </div>
-
-      <aside class="side">
-        <div class="panel">
-          <div class="muted">How to play</div>
-          <div style="margin-top:8px" class="hint">
-            Tap any cell to spark it. If a cell gets more orbs than its neighbor-capacity, it explodes and sends one orb to each neighbour (up/down/left/right) and converts them to the exploding color — this can cause chain reactions!<br><br>
-            Goal: clear all orbs, or create the largest chain. Try different sizes and fill densities.
-          </div>
-        </div>
-
-        <div class="panel">
-          <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
-            <div class="muted">Colors</div>
-            <div class="small muted">Tap a cell to start</div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:10px;align-items:center">
-            <div style="width:36px;height:36px;border-radius:50%" class="c-red" title="Red"></div>
-            <div style="width:36px;height:36px;border-radius:50%" class="c-green" title="Green"></div>
-            <div style="width:36px;height:36px;border-radius:50%" class="c-blue" title="Blue"></div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-            <div class="muted">Sound</div>
-            <label style="display:flex;align-items:center;gap:6px">
-              <input id="soundToggle" type="checkbox" checked> <span class="small muted">On</span>
-            </label>
-          </div>
-          <div style="margin-top:10px" class="muted small">Best strategy: spark near denser areas to trigger long chains.</div>
-        </div>
-      </aside>
+    <div class="board-wrap">
+      <div id="board" class="board" role="grid" aria-live="polite"></div>
     </div>
 
-    <footer>
-      <div class="muted">Happy Dreams2Success</div>
-    </footer>
-  </div>
+    <footer>Happy Dreams2Success</footer>
+  </main>
 </div>
 
+<div class="confetti" id="confetti"></div>
+
 <script>
-/*
-  Chain Reaction (single player)
-  - Grid of cells; each cell: { color: 'red'|'green'|'blue'|null, count: int }
-  - Capacity = number of orthogonal neighbors (2..4)
-  - Clicking cell increments its count by 1 and sets color if empty.
-  - If count > capacity -> explode: subtract capacity, distribute +1 to each neighbor and set neighbor.color = exploding color.
-  - Continue until stable. Track total explosion events as chain length (score).
-  - Objective: clear board or maximize chain.
+/* Mobile-first Chain Reaction — simplified UI and polished animations
+   - Single-file, host on GitHub Pages
+   - Minimal visible text (only controls + stats + footer)
 */
 
 (function(){
-  // DOM
-  const boardContainer = document.getElementById('boardContainer');
+  // DOM nodes
+  const board = document.getElementById('board');
+  const newBtn = document.getElementById('newBtn');
   const sizeSelect = document.getElementById('sizeSelect');
   const fillInput = document.getElementById('fillInput');
-  const fillPct = document.getElementById('fillPct');
-  const newBtn = document.getElementById('newBtn');
+  const soundToggle = document.getElementById('soundToggle');
   const movesEl = document.getElementById('moves');
   const chainEl = document.getElementById('chain');
-  const lastChainEl = document.getElementById('lastChain');
-  const bestChainEl = document.getElementById('bestChain');
-  const soundToggle = document.getElementById('soundToggle');
+  const confettiRoot = document.getElementById('confetti');
 
-  // config
+  // state
   let rows = 5, cols = 7;
-  let fillDensity = Number(fillInput.value); // percentage
-  let grid = []; // 2D array of cell objects
-  let cells = []; // flat list of .cell DOM elements aligned with grid indices
+  let fill = Number(fillInput.value);
+  let grid = [];
+  let cells = [];
   let moves = 0;
   let currentChain = 0;
-  let bestChain = Number(localStorage.getItem('cr_best') || 0);
-  bestChainEl.textContent = bestChain;
+  let best = Number(localStorage.getItem('cr_best') || 0);
+  let audioCtx = (typeof AudioContext !== 'undefined') ? new AudioContext() : null;
 
-  // sounds (tiny)
-  const audioCtx = typeof AudioContext !== 'undefined' ? new AudioContext() : null;
-  function beep(freq=220, time=0.06, vol=0.12){ if(!audioCtx || !soundToggle.checked) return; const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.frequency.value = freq; o.type='sine'; g.gain.value = vol; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + time); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + time); }
-
-  // color helpers
+  // colors & css class map
   const COLORS = ['red','green','blue'];
-  const CSS_CLASS = { red: 'c-red', green: 'c-green', blue: 'c-blue' };
-  const RGB = { red: getComputedStyle(document.documentElement).getPropertyValue('--red') || '#ff4d6d',
-                green: getComputedStyle(document.documentElement).getPropertyValue('--green') || '#4cc96b',
-                blue: getComputedStyle(document.documentElement).getPropertyValue('--blue') || '#4cc9f0' };
+  const CSS = { red: 'c-red', green: 'c-green', blue: 'c-blue' };
 
-  // UI update
-  fillInput.addEventListener('input', ()=> { fillPct.textContent = fillInput.value + '%'; fillDensity = Number(fillInput.value); });
-  sizeSelect.addEventListener('change', ()=> { const v = sizeSelect.value.split('x'); rows = Number(v[0]); cols = Number(v[1]); rebuild(); });
-  newBtn.addEventListener('click', ()=> rebuild());
-  fillPct.textContent = fillInput.value + '%';
+  // adjust board CSS grid when size changes
+  function setBoardGrid(){
+    board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    board.style.gap = 'var(--cell-gap)';
+  }
 
-  // keyboard accessibility: allow Enter/Space to click
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'r' || e.key === 'R'){ rebuild(); }
-  });
-
-  // build grid and DOM
   function rebuild(){
-    // stop any running animations (none persistent)
     rows = Number(sizeSelect.value.split('x')[0]);
     cols = Number(sizeSelect.value.split('x')[1]);
-    fillDensity = Number(fillInput.value);
-
+    fill = Number(fillInput.value);
     grid = [];
     cells = [];
     moves = 0;
     currentChain = 0;
     updateStats();
+    board.innerHTML = '';
+    setBoardGrid();
 
-    // clear DOM
-    boardContainer.innerHTML = '';
-    // grid CSS: set columns auto-fit
-    boardContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    boardContainer.style.gridAutoRows = `minmax(64px, 1fr)`;
-    boardContainer.style.gap = `var(--cell-gap)`;
-
-    // populate
     for(let r=0;r<rows;r++){
       const row = [];
       for(let c=0;c<cols;c++){
-        const empty = Math.random()*100 > fillDensity; // if true, cell empty
+        // random initial
+        const empty = Math.random()*100 > fill;
         const color = empty ? null : COLORS[Math.floor(Math.random()*COLORS.length)];
-        const count = empty ? 0 : (1 + Math.floor(Math.random()*2)); // 1..2
-        const cell = { r, c, color, count };
-        row.push(cell);
+        const count = empty ? 0 : (1 + Math.floor(Math.random()*2));
+        row.push({ r, c, color, count });
 
-        // DOM
         const el = document.createElement('button');
         el.className = 'cell';
         el.dataset.r = r; el.dataset.c = c;
-        el.setAttribute('aria-label', `Cell ${r+1},${c+1}`);
-        el.setAttribute('role','gridcell');
-        el.tabIndex = 0;
-        el.addEventListener('click', onCellClick, {passive: true});
-        el.addEventListener('touchstart', (ev)=> { ev.preventDefault(); onCellClick({ currentTarget: el }); }, {passive:false});
-        boardContainer.appendChild(el);
+        el.setAttribute('aria-label', `Cell ${r+1}, ${c+1}`);
+        el.addEventListener('click', onCellClick, {passive:true});
+        el.addEventListener('touchstart', (e)=>{ e.preventDefault(); onCellClick({currentTarget: el}); }, {passive:false});
+        board.appendChild(el);
         cells.push(el);
       }
       grid.push(row);
@@ -283,7 +178,6 @@
     renderAll();
   }
 
-  // Get neighbors
   function neighbors(r,c){
     const out = [];
     if(r>0) out.push([r-1,c]);
@@ -292,45 +186,32 @@
     if(c<cols-1) out.push([r,c+1]);
     return out;
   }
-
-  // capacity = neighbors count
   function capacity(r,c){ return neighbors(r,c).length; }
 
-  // render a cell DOM from state
   function renderCell(cell, el){
     el.innerHTML = '';
-    // badge for count if >0
     if(cell.count > 0){
       const badge = document.createElement('div');
       badge.className = 'badge';
       badge.textContent = cell.count;
       el.appendChild(badge);
-    }
-    // orbs: stack small orbs depending on count (max 4 visible)
-    if(cell.count > 0){
       const stack = document.createElement('div');
       stack.className = 'orb-stack';
-      // show up to 3 medium orbs (visual)
-      const countToShow = Math.min(cell.count, 3);
-      for(let i=0;i<countToShow;i++){
+      const show = Math.min(cell.count, 3);
+      for(let i=0;i<show;i++){
         const orb = document.createElement('div');
-        orb.className = 'orb';
-        orb.classList.add(CSS_CLASS[cell.color] || 'c-red');
-        // slight vertical offset for stacked look
+        orb.className = 'orb ' + (CSS[cell.color] || CSS.red);
         orb.style.transform = `translateY(-${i*6}px)`;
         stack.appendChild(orb);
       }
-      // if more than 3, show tiny orb with +n
       if(cell.count > 3){
         const small = document.createElement('div');
         small.className = 'orb small';
-        small.style.marginTop = '6px';
         small.style.position = 'relative';
-        small.style.boxShadow = '0 6px 12px rgba(0,0,0,0.35)';
         small.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.04))';
         const plus = document.createElement('div');
         plus.textContent = '+' + (cell.count-3);
-        plus.style.position = 'absolute'; plus.style.left='50%'; plus.style.top='50%'; plus.style.transform='translate(-50%,-50%)';
+        plus.style.position='absolute'; plus.style.left='50%'; plus.style.top='50%'; plus.style.transform='translate(-50%,-50%)';
         plus.style.fontSize='11px'; plus.style.color='#fff'; plus.style.fontWeight='800';
         small.appendChild(plus);
         stack.appendChild(small);
@@ -352,188 +233,154 @@
     }
   }
 
-  // explosion processing: BFS queue
-  function processChain(startR, startC){
+  function beep(freq=220, time=0.06, vol=0.08){
+    if(!audioCtx || !soundToggle.dataset.on) return;
+    try{
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.frequency.value = freq; o.type='sine';
+      g.gain.value = vol;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + time);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + time);
+    }catch(e){}
+  }
+
+  function processChain(sr, sc){
     currentChain = 0;
     const q = [];
-    // Add a spark: clicking increments count and sets color if empty (choose random color if empty)
-    let start = grid[startR][startC];
+    let start = grid[sr][sc];
     if(start.count === 0){
-      // start with random color for empty cell so player can create colors
       start.color = COLORS[Math.floor(Math.random()*COLORS.length)];
     }
     start.count += 1;
     moves++;
     updateStats();
-    renderCell(start, cells[startR*cols + startC]);
+    renderCell(start, cells[sr*cols + sc]);
+    if(start.count > capacity(sr, sc)) q.push([sr, sc, start.color]);
 
-    // push initial cell if over capacity
-    if(start.count > capacity(startR,startC)){
-      q.push([startR,startC,start.color]);
-    }
-
-    // iterative propagation
     while(q.length){
-      const [r,c, color] = q.shift();
+      const [r,c,color] = q.shift();
       const cell = grid[r][c];
-      // explosion event
       currentChain++;
-      // animation trigger
-      flashCell(r,c);
-      // subtract capacity
+      pulseCell(r,c);
       const cap = capacity(r,c);
       cell.count -= cap;
-      if(cell.count <= 0){
-        cell.count = 0;
-        cell.color = null;
-      }
-      // distribute to neighbors
+      if(cell.count <= 0){ cell.count = 0; cell.color = null; }
       const nbs = neighbors(r,c);
       for(const [nr,nc] of nbs){
         const nb = grid[nr][nc];
         nb.count += 1;
-        nb.color = color; // convert neighbor to exploding color
-        // play small beep per distribution
-        beepForChain();
+        nb.color = color;
+        beep(220 + Math.random()*160, 0.03, 0.04);
         renderCell(nb, cells[nr*cols + nc]);
         if(nb.count > capacity(nr,nc)){
-          // ensure it's queued only once by pushing — duplicates allowed but okay
           q.push([nr,nc, nb.color]);
         }
       }
-      // update current cell display
       renderCell(cell, cells[r*cols + c]);
     }
 
-    // update stats
     chainEl.textContent = currentChain;
-    lastChainEl.textContent = currentChain;
-    if(currentChain > bestChain){ bestChain = currentChain; bestChainEl.textContent = bestChain; localStorage.setItem('cr_best', bestChain); }
-    // win condition: all counts zero?
+    if(currentChain > best){ best = currentChain; localStorage.setItem('cr_best', best); }
     if(isCleared()){
-      statusMessage('Board cleared! Great chain 🎉', true);
-      // big confetti
-      spawnConfettiFull();
-      beep(520, 0.2, 0.15);
-    } else {
-      statusMessage('Chain finished. Try another spark!', false);
+      bigConfetti();
+      beep(520, 0.18, 0.15);
     }
     updateStats();
   }
 
-  function isCleared(){
-    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(grid[r][c].count > 0) return false;
-    return true;
-  }
+  function isCleared(){ for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(grid[r][c].count>0) return false; return true; }
 
-  // small per-step beep
-  let beepTimer = 0;
-  function beepForChain(){
-    // create slight pitch variation
-    const freq = 220 + Math.random()*220;
-    beep(freq, 0.04, 0.06);
-  }
-
-  // flash cell visually on explosion
-  function flashCell(r,c){
+  function pulseCell(r,c){
     const el = cells[r*cols + c];
     el.classList.add('pulse');
     setTimeout(()=> el.classList.remove('pulse'), 420);
   }
 
-  // status message in small area (uses statusText element)
-  function statusMessage(txt, highlight){
-    statusText.innerHTML = highlight ? `<strong style="color:var(--accent)">${txt}</strong>` : txt;
-  }
-
-  // cell click handler
-  function onCellClick(e){
-    // find target
-    const el = e.currentTarget;
-    const r = Number(el.dataset.r);
-    const c = Number(el.dataset.c);
-    // resume audio (for browsers requiring gesture)
-    if(audioCtx && audioCtx.state === 'suspended'){ audioCtx.resume(); }
-    processChain(r,c);
-  }
-
-  // update stats
-  function updateStats(){
-    movesEl.textContent = moves;
-    chainEl.textContent = currentChain;
-    lastChainEl.textContent = currentChain;
-    bestChainEl.textContent = bestChain;
-  }
-
-  // confetti spawn (small)
-  function spawnConfettiAtSlot(slotEl){
-    const rect = slotEl.getBoundingClientRect();
-    const rootRect = confettiRoot.getBoundingClientRect();
-    const centerX = (rect.left + rect.right)/2 - rootRect.left;
-    const startY = (rect.top - rootRect.top);
-    const pieces = 12;
+  function smallConfettiAt(el){
+    const rect = el.getBoundingClientRect();
+    const root = confettiRoot.getBoundingClientRect();
+    const cx = (rect.left + rect.right)/2 - root.left;
+    const sy = rect.top - root.top;
     const colors = ['#ff4d6d','#4cc96b','#4cc9f0','#ffd166','#c77dff'];
-    for(let i=0;i<pieces;i++){
-      const e = document.createElement('i');
-      const w = 6 + Math.random()*10;
-      const h = 10 + Math.random()*18;
-      e.style.width = w + 'px'; e.style.height = h + 'px';
-      e.style.left = (centerX + (Math.random()*80 - 40)) + 'px';
-      e.style.top = startY + (Math.random()*20 - 8) + 'px';
+    for(let i=0;i<12;i++){
+      const e = document.createElement('div');
+      e.style.position='absolute'; e.style.width = (6 + Math.random()*8)+'px'; e.style.height = (10 + Math.random()*18)+'px';
+      e.style.left = (cx + (Math.random()*80 - 40)) + 'px';
+      e.style.top = (sy + (Math.random()*20 - 8)) + 'px';
       e.style.background = colors[Math.floor(Math.random()*colors.length)];
       confettiRoot.appendChild(e);
       const destX = (Math.random()*300 - 150);
-      const destY = rootRect.height + 60 + Math.random()*120;
+      const destY = root.height + 80 + Math.random()*150;
       const rot = Math.random()*720 - 360;
-      e.animate([{ transform:`translateY(0) rotate(0)`, opacity:1 }, { transform:`translate(${destX}px, ${destY}px) rotate(${rot}deg)`, opacity:0.04 }], { duration: 900 + Math.random()*800, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      e.animate([{ transform:'translateY(0) rotate(0deg)', opacity:1 }, { transform:`translate(${destX}px, ${destY}px) rotate(${rot}deg)`, opacity:0.02 }], { duration: 900 + Math.random()*700, easing:'cubic-bezier(.2,.8,.2,1)' });
       setTimeout(()=> e.remove(), 2000 + Math.random()*800);
     }
   }
-  function spawnConfettiFull(){
-    const pieces = 40;
+
+  function bigConfetti(){
+    const root = confettiRoot.getBoundingClientRect();
     const colors = ['#ff4d6d','#4cc96b','#4cc9f0','#ffd166','#c77dff'];
-    const rootRect = confettiRoot.getBoundingClientRect();
-    for(let i=0;i<pieces;i++){
-      const e = document.createElement('i');
-      const w = 6 + Math.random()*12; const h = 10 + Math.random()*20;
-      e.style.width = w + 'px'; e.style.height = h + 'px';
-      e.style.left = (Math.random()*rootRect.width) + 'px';
-      e.style.top = (Math.random()*rootRect.height*0.3) + 'px';
+    for(let i=0;i<40;i++){
+      const e = document.createElement('div');
+      e.style.position='absolute'; e.style.width = (6 + Math.random()*12)+'px'; e.style.height=(10 + Math.random()*18)+'px';
+      e.style.left = (Math.random()*root.width) + 'px';
+      e.style.top = (Math.random()*root.height*0.35) + 'px';
       e.style.background = colors[Math.floor(Math.random()*colors.length)];
       confettiRoot.appendChild(e);
       const destX = (Math.random()*800 - 400);
-      const destY = rootRect.height + 100 + Math.random()*240;
+      const destY = root.height + 100 + Math.random()*240;
       const rot = Math.random()*720 - 360;
-      e.animate([{ transform:`translateY(0) rotate(0)`, opacity:1 }, { transform:`translate(${destX}px, ${destY}px) rotate(${rot}deg)`, opacity:0.05 }], { duration: 1200 + Math.random()*1000, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      e.animate([{ transform:'translateY(0) rotate(0deg)', opacity:1 }, { transform:`translate(${destX}px, ${destY}px) rotate(${rot}deg)`, opacity:0.04 }], { duration: 1200 + Math.random()*1000, easing:'cubic-bezier(.2,.8,.2,1)' });
       setTimeout(()=> e.remove(), 2200 + Math.random()*1200);
     }
   }
 
-  // small visual pulsing when user clicks empty cell to create color
-  function clickPulseAt(r,c){
-    const el = cells[r*cols + c];
-    el.animate([{ transform: 'scale(0.98)' }, { transform: 'scale(1)' }], { duration: 180, easing: 'ease-out' });
+  function updateStats(){
+    movesEl.textContent = moves;
+    chainEl.textContent = currentChain;
   }
 
-  // initialize
+  function onCellClick(e){
+    const el = e.currentTarget;
+    const r = Number(el.dataset.r), c = Number(el.dataset.c);
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    processChain(r,c);
+    smallConfettiAt(el);
+  }
+
+  // wire controls
+  newBtn.addEventListener('click', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); rebuild(); });
+  sizeSelect.addEventListener('change', ()=> { rows = Number(sizeSelect.value.split('x')[0]); cols = Number(sizeSelect.value.split('x')[1]); rebuild(); });
+  fillInput.addEventListener('input', ()=> { fill = Number(fillInput.value); });
+  soundToggle.addEventListener('click', ()=> {
+    if(!audioCtx) return;
+    if(soundToggle.dataset.on){ soundToggle.dataset.on = ''; soundToggle.classList.remove('btn'); soundToggle.classList.add('btn','ghost'); soundToggle.textContent = '🔇'; }
+    else { soundToggle.dataset.on = '1'; soundToggle.classList.remove('btn','ghost'); soundToggle.classList.add('btn'); soundToggle.textContent = '🔊'; }
+  });
+
+  // initialize audio toggle state
+  soundToggle.dataset.on = '1';
+  soundToggle.textContent = '🔊';
+
+  // initial build
   function init(){
-    // set rows/cols from select
-    const v = sizeSelect.value.split('x'); rows = Number(v[0]); cols = Number(v[1]);
+    setBoardGrid();
     rebuild();
   }
 
-  // expose a helper for debugging
-  window._chainReaction = { rebuild };
+  // Ensure CSS grid columns updated
+  function setBoardGrid(){ board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`; board.style.gap = 'var(--cell-gap)'; }
 
-  // confetti DOM root
-  const confettiRoot = document.createElement('div');
-  confettiRoot.className = 'confetti';
-  document.body.appendChild(confettiRoot);
-
-  // initial run
+  // start
   init();
 
-  // small helpers: resume audio on first user gesture
+  // expose for debugging
+  window._ChainReaction = { rebuild };
+
+  // resume audio on first gesture for some devices
   window.addEventListener('touchstart', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }, {passive:true});
   window.addEventListener('click', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }, {passive:true});
 })();
